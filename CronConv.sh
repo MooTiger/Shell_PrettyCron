@@ -97,7 +97,7 @@ cat ${cronfile} | while read min hour DoM Month DoW CMD; do
 	Pretty_Month
 	Pretty_DoW
 
-
+	echo "we run ${CMD}"
 	echo "CronTime is ${crontime}" #Just to see what the input fields were
 	echo "${prettytime}${prettyhour} ${prettymin} ${prettydow} ${prettydom} ${prettymonth}"
 
