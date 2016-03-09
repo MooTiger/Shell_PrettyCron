@@ -9,15 +9,15 @@ prettytime=
 if [[ ${min} = "*" ]]; then
 	prettymin="Every Minute"
 elif [[ ${min} -eq 0 ]]; then 
-	prettymin="00"
+	prettymin=":00"
 else
-	prettymin=${min}
+	prettymin=":${min}"
 fi
 
 if [[ ${hour} = "*" ]]; then
 	prettyhour="of Every Hour"
-elif [[ ${hour} -eq 0 ]]; then 
-	prettyhour="00"
+elif [[ $(echo ${hour} | wc -m ) -le 2 ]]; then 
+	prettyhour="0${hour}"
 else
 	prettyhour=${hour}
 fi
@@ -28,8 +28,6 @@ if [[ $(echo ${hour} | awk '/,/') ]] && [[ $(echo ${min} | awk '/,/') ]]; then
 			temptime="${i}:${m}"
 			prettytime="${prettytime} ${temptime}"
 		done
-#	temphour="${temphour}:${prettymin} ${i}"
-#	temphour=$(echo ${temphour} | sed 's/^:..//')
 	done
 	prettymin=
 	prettyhour=
@@ -49,6 +47,7 @@ elif [[ $(echo ${min} | awk '/,/') ]]; then
 	prettymin=
 	prettyhour=
 fi	
+prettytime=$(echo ${prettytime} | sed 's/^ //')
 }
 
 function Pretty_Month {
@@ -83,7 +82,7 @@ elif [[ ${DoM} != "*" ]] && [[ ${DoW} = "*" ]];then
 elif [[ ${DoW} != "*" ]] && [[ ${DoM} != "*" ]];then
 	prettydom="on ${DAYS[${DoW}]} the ${DoM}"
 else
-	prettydow="On ${DAYS[${DoW}]}"
+	prettydow="On each ${DAYS[${DoW}]}"
 fi
 }
 
