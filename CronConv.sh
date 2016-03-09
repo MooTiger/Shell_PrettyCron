@@ -94,7 +94,6 @@ cat ${cronfile} | while read min hour DoM Month DoW CMD; do
 
 
 	Pretty_Time
-	Pretty_DoM
 	Pretty_Month
 	Pretty_DoW
 
