@@ -1,7 +1,6 @@
 #specify cronfile to read
 cronfile=/var/spool/cron/root
 
-
 function Pretty_Time {
 prettymin=
 prettyhour=
@@ -52,15 +51,6 @@ elif [[ $(echo ${min} | awk '/,/') ]]; then
 fi	
 }
 
-function Pretty_DoM {
-prettydom=
-if [[ ${DoM} = "*" ]]; then
-	prettydom="and Every Day"
-else 
-	prettydom="on the ${DoM} of"
-fi
-}
-
 function Pretty_Month {
 prettymonth=
 MONTHS=(ZERO Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
@@ -78,18 +68,25 @@ fi
 
 function Pretty_DoW {
 prettydow=
+prettydom=
 DAYS=(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
-if [[ ${DoW} = "*" ]]; then
-	prettydow="Every Weekday"
+
+if [[ ${DoW} = "*" ]] && [[ ${DoM} = "*" ]]; then
+	prettydow="Every Day"
 elif [[ $(echo ${DoW} | awk '/,/') ]] ; then
 	for i in $(echo ${DoW} | tr ',' ' ') ; do
 		tempdow="${tempdow} ${DAYS[${i}]}"
 	done
 	prettydow="On the weekdays${tempdow}"
+elif [[ ${DoM} != "*" ]] && [[ ${DoW} = "*" ]];then
+	prettydom="on the ${DoM} of"
+elif [[ ${DoW} != "*" ]] && [[ ${DoM} != "*" ]];then
+	prettydom="on ${DAYS[${DoW}]} the ${DoM} of"
 else
 	prettydow="On ${DAYS[${DoW}]}"
 fi
 }
+
 
 #Start of while read loop
 cat ${cronfile} | while read min hour DoM Month DoW CMD; do 
