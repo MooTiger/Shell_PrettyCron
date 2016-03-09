@@ -81,7 +81,7 @@ elif [[ $(echo ${DoW} | awk '/,/') ]] ; then
 elif [[ ${DoM} != "*" ]] && [[ ${DoW} = "*" ]];then
 	prettydom="on the ${DoM} of"
 elif [[ ${DoW} != "*" ]] && [[ ${DoM} != "*" ]];then
-	prettydom="on ${DAYS[${DoW}]} the ${DoM} of"
+	prettydom="on ${DAYS[${DoW}]} the ${DoM}"
 else
 	prettydow="On ${DAYS[${DoW}]}"
 fi
