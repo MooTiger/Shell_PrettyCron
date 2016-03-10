@@ -8,12 +8,6 @@ Much googling found no shell based solutions.
 
 I wrote one.
 
-Support for Comma Seperated 
-  mins / hours / months / Days of Weeks
 
-No Support for Comma Seperated 
-  Days of Month
-
-No Support for Slash Values
-  */5 #every 5 Minutes
-  
+No Support for Slash Values or Ranges
+*/5 (every 5 Minutes) or 1-5 (Monday to Friday)
