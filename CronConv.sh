@@ -1,7 +1,8 @@
 #!/bin/bash
 
-#specify cronfile to read
+
 cronfile=/var/spool/cron/root
+
 
 function Pretty_Time {
 prettymin=
@@ -10,8 +11,8 @@ prettytime=
 
 if [[ ${min} = "*" ]]; then
 	prettymin="Every Minute"
-elif [[ ${min} -eq 0 ]]; then 
-	prettymin=":00"
+#elif [[ ${min} -eq 0 ]]; then 
+	#prettymin=":00"
 else
 	prettymin=":${min}"
 fi
@@ -36,7 +37,6 @@ if [[ $(echo ${hour} | awk '/,/') ]] && [[ $(echo ${min} | awk '/,/') ]]; then
 elif [[ $(echo ${hour} | awk '/,/') ]]; then
 	for i in $(echo ${hour} | tr ',' ' ');do
 		temphour="${temphour}:${prettymin} ${i}"
-		temphour=$(echo ${temphour} | sed 's/^:..//')
 	done
 	prettytime="${temphour}:${prettymin}"
 	prettymin=
@@ -49,11 +49,11 @@ elif [[ $(echo ${min} | awk '/,/') ]]; then
 	prettymin=
 	prettyhour=
 fi	
-prettytime=$(echo ${prettytime} | sed 's/^ //')
 }
 
 function Pretty_Month {
 prettymonth=
+tempmonth=
 MONTHS=(ZERO Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
 if [[ ${Month} = "*" ]]; then
 	prettymonth="of Every Month"
@@ -67,39 +67,83 @@ else
 fi
 }
 
-function Pretty_DoW {
+function Split_DoM {
+
+for d in $(echo ${i}); do
+	if [[ ${#d} -eq 1 ]] ;then
+		Digit=${d}
+		F_Suffix
+	else
+		Digit=$(echo ${d#[0-9]})
+		F_Suffix
+	fi
+done
+}
+
+function F_Suffix {
+
+case ${Digit} in
+	1) suffix="st" ;;
+	2) suffix="nd" ;;
+	3) suffix="rd" ;;
+	*) suffix="th" ;;
+esac
+}
+
+function Pretty_Days {
 prettydow=
 prettydom=
+prettydays=
 DAYS=(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+
+
+
+
+
+
 
 if [[ ${DoW} = "*" ]] && [[ ${DoM} = "*" ]]; then
 	prettydow="Every Day"
+elif [[ $(echo ${DoW} | awk '/,/') ]] && [[ $(echo ${DoM} | awk '/,/') ]]; then
+	for i in $(echo ${DoW} | tr ',' ' ') ; do
+		tempdow="${tempdow} ${DAYS[${i}]}"
+	done
+	for i in $(echo ${DoM} | tr ',' ' ') ; do
+		Split_DoM
+		tempdom="${tempdom} ${i}${suffix}"
+	done
+	prettydays="on ${tempdow} and the ${tempdom}"
+
 elif [[ $(echo ${DoW} | awk '/,/') ]] ; then
 	for i in $(echo ${DoW} | tr ',' ' ') ; do
 		tempdow="${tempdow} ${DAYS[${i}]}"
 	done
 	prettydow="On the weekdays${tempdow}"
-elif [[ ${DoM} != "*" ]] && [[ ${DoW} = "*" ]];then
+elif [[ ${DoW} = "*" ]] && [[ ${DoM} != "*" ]]; then
 	prettydom="on the ${DoM} of"
-elif [[ ${DoW} != "*" ]] && [[ ${DoM} != "*" ]];then
-	prettydom="on ${DAYS[${DoW}]} the ${DoM}"
+	Split_DoM
+elif [[ ${DoW} != "*" ]] && [[ ${DoM} != "*" ]]; then
+	prettydom="on ${DAYS[${DoW}]} and the ${DoM}${suffix}"
+	Split_DoM
 else
 	prettydow="On each ${DAYS[${DoW}]}"
 fi
+
 }
+
+
 
 
 #Start of while read loop
 cat ${cronfile} | while read min hour DoM Month DoW CMD; do 
 	export crontime=$(printf "%s %s %s %s %s\n" "$min" "$hour" "$DoM" "$Month" "$DoW") 
-
-
+	
 	Pretty_Time
 	Pretty_Month
-	Pretty_DoW
+	Pretty_Days
 
-	echo "we run ${CMD}"
-	echo "CronTime is ${crontime}" #Just to see what the input fields were
-	echo "${prettytime}${prettyhour} ${prettymin} ${prettydow} ${prettydom} ${prettymonth}"
+	echo "We Run ${CMD}"
+	echo "CronTime is ${crontime}" 
+	echo "${prettytime}${prettyhour}${prettymin} ${prettydays}${prettydow} ${prettydom} ${prettymonth}" | sed -e 's/  / /g' -e 's/^ //' -e 's/:0/:00/g'
 
 done #End of While Read Loop
