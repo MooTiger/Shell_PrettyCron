@@ -1,3 +1,5 @@
+#!/bin/bash
+
 #specify cronfile to read
 cronfile=/var/spool/cron/root
 
