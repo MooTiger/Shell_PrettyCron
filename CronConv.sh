@@ -1,18 +1,24 @@
 #!/bin/bash
 
 
-cronfile=/var/spool/cron/root
+if [[ -n $1 ]]; then
+	cronfile=$1
+else
+	cronfile=$(find /var/spool/cron -type f)
+fi
 
 
 function Pretty_Time {
 prettymin=
 prettyhour=
 prettytime=
+temphour=
+tempmin=
 
 if [[ ${min} = "*" ]]; then
 	prettymin="Every Minute"
-#elif [[ ${min} -eq 0 ]]; then 
-	#prettymin=":00"
+elif [[ ${min} -eq 0 ]] ;then
+	prettymin=":00"
 else
 	prettymin=":${min}"
 fi
@@ -36,9 +42,9 @@ if [[ $(echo ${hour} | awk '/,/') ]] && [[ $(echo ${min} | awk '/,/') ]]; then
 	prettyhour=
 elif [[ $(echo ${hour} | awk '/,/') ]]; then
 	for i in $(echo ${hour} | tr ',' ' ');do
-		temphour="${temphour}:${prettymin} ${i}"
+		temphour="${temphour}${i}${prettymin} "
 	done
-	prettytime="${temphour}:${prettymin}"
+	prettytime="${temphour}"
 	prettymin=
 	prettyhour=
 elif [[ $(echo ${min} | awk '/,/') ]]; then
@@ -96,12 +102,6 @@ prettydom=
 prettydays=
 DAYS=(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
 
-
-
-
-
-
-
 if [[ ${DoW} = "*" ]] && [[ ${DoM} = "*" ]]; then
 	prettydow="Every Day"
 elif [[ $(echo ${DoW} | awk '/,/') ]] && [[ $(echo ${DoM} | awk '/,/') ]]; then
@@ -132,18 +132,19 @@ fi
 }
 
 
+#Start of read loops
+for crons in ${cronfile}; do
+	awk '/ackup/ && !/^#/ {print $0}' ${crons} | while read min hour DoM Month DoW CMD; do 
+		export crontime=$(printf "%s %s %s %s %s\n" "$min" "$hour" "$DoM" "$Month" "$DoW") 
+		usernm=$(echo $crons | awk -F"cron/" '{print $2}')
+		
+		Pretty_Time
+		Pretty_Month
+		Pretty_Days
 
-
-#Start of while read loop
-cat ${cronfile} | while read min hour DoM Month DoW CMD; do 
-	export crontime=$(printf "%s %s %s %s %s\n" "$min" "$hour" "$DoM" "$Month" "$DoW") 
-	
-	Pretty_Time
-	Pretty_Month
-	Pretty_Days
-
-	echo "We Run ${CMD}"
-	echo "CronTime is ${crontime}" 
-	echo "${prettytime}${prettyhour}${prettymin} ${prettydays}${prettydow} ${prettydom} ${prettymonth}" | sed -e 's/  / /g' -e 's/^ //' -e 's/:0/:00/g'
-
-done #End of While Read Loop
+		echo ""
+		echo "${usernm} runs ${CMD}"
+		echo "CronTime is ${crontime}" 
+		echo "${prettytime}${prettyhour}${prettymin} ${prettydays}${prettydow} ${prettydom} ${prettymonth}" | sed -e 's/  / /g' -e 's/^ //'
+	done #End of While Read Loop
+done #End of for Loop
