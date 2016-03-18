@@ -154,7 +154,7 @@ fi
 
 #Start of read loops
 for crons in ${cronfile}; do
-	cat ${crons} | while read min hour DoM Month DoW CMD; do 
+	cat ${crons} | egrep -v "^#|^$"| while read min hour DoM Month DoW CMD; do 
 		export crontime=$(printf "%s %s %s %s %s\n" "$min" "$hour" "$DoM" "$Month" "$DoW") 
 		usernm=$(echo $crons | awk -F"cron/" '{print $2}')
 		
