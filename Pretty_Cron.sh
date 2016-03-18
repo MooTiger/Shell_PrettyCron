@@ -8,10 +8,8 @@ else
 fi
 
 function Range_Convert {
-
-	Range_Var=$(echo ${Range_Var} | sed 's/,/ /g')  
-	Range_Var=$(echo "{${Range_Var}}" |sed -e 's/-/../g' -e 's/ /} {/g') 
-	Range_Var=$(eval echo ${Range_Var}| tr ' ' ',')
+	#changes dashes to .. for bracket expansion and comma's to open/close brackets to allow more expansions .. then changes all back to comma seperated.
+	Range_Var=$(eval echo $(echo "{${Range_Var}}" | sed -e 's/-/../g' -e 's/,/} {/g') | tr ' ' ',' )
 }
 
 function Pretty_Time {
