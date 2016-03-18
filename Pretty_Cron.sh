@@ -9,11 +9,9 @@ fi
 
 function Range_Convert {
 
-if [[ $(echo "${Range_Var}" | grep "-") ]] ; then  
 	Range_Var=$(echo ${Range_Var} | sed 's/,/ /g')  
 	Range_Var=$(echo "{${Range_Var}}" |sed -e 's/-/../g' -e 's/ /} {/g') 
 	Range_Var=$(eval echo ${Range_Var}| tr ' ' ',')
-fi
 }
 
 function Pretty_Time {
@@ -86,7 +84,7 @@ fi
 function Split_DoM {
 
 for d in $(echo ${i}); do
-	if [[ ${#d} -eq 1 ]] ;then
+	if [[ ${#d} -eq 1 ]] || [[ ${d} -eq 11 ]] || [[ ${d} -eq 12 ]] || [[ ${d} -eq 13 ]] ;then
 		Digit=${d}
 		F_Suffix
 	else
