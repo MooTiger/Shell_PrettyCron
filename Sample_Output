@@ -1,6 +1,8 @@
-
 CronTime is 15 22 * * *
 22:15 Every Day of Every Month
+
+CronTime is 00 9,18 * * *
+9:00 18:00 Every Day of Every Month
 
 CronTime is 15,30,45 22 * * *
 22:15 22:30 22:45 Every Day of Every Month
@@ -8,8 +10,16 @@ CronTime is 15,30,45 22 * * *
 CronTime is 00,30 10,22 * * *
 10:00 10:30 22:00 22:30 Every Day of Every Month
 
-CronTime is 30 21 * 4,6 0
-21:30 On each Sunday In Apr Jun
+CronTime is 30 21 * 1-2,6-12 0
+21:30 On each Sunday In Jan Feb Jun Jul Aug Sep Oct Nov Dec
 
 CronTime is 0,30 17,03 1,2,3,4,5 1,12 1,2,3,4,6
-17:00 17:30 03:00 03:30 on Monday Tuesday Wednesday Thursday Saturday and the 1st 2nd 3rd 4th 5th In Jan Dec
+17:0 17:30 03:0 03:30 on Monday Tuesday Wednesday Thursday Saturday and the 1st 2nd 3rd 4th 5th In Jan Dec
+
+CronTime is 0 17 * * 5
+17:00 On each Friday of Every Month
+
+CronTime is 0 17 * * 1-5
+17:00 On the weekdays Monday Tuesday Wednesday Thursday Friday of Every Month
+
+
