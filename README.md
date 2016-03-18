@@ -9,5 +9,4 @@ Much googling found no shell based solutions.
 I wrote one.
 
 
-No Support for Slash Values */5 (every 5 Minutes) or Ranges 1-5 (Monday to Friday)
- 
+No Support for Slash Values */5 (every 5 Minutes)
