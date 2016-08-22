@@ -18,7 +18,7 @@ unset prettymin prettyhour prettytime temphour tempmin
 if [[ ${min} = "*" ]]; then
 	prettymin="Every Minute"
 elif [[ ${min} -eq 0 ]] ;then
-	prettymin=":00"
+	prettymin=$(printf ":%02g" ${min})
 else
 	prettymin=":${min}"
 fi
@@ -34,26 +34,24 @@ fi
 if [[ $(echo ${hour} | awk '/,/') ]] && [[ $(echo ${min} | awk '/,/') ]]; then
 	for i in $(echo ${hour} | tr ',' ' ');do
 		for m in $(echo ${min} | tr ',' ' '); do
+			i=$(printf "%02g" ${i})
 			temptime="${i}:${m}"
 			prettytime="${prettytime} ${temptime}"
 		done
 	done
-	prettymin=
-	prettyhour=
+	unset prettymin prettyhour
 elif [[ $(echo ${hour} | awk '/,/') ]]; then
 	for i in $(echo ${hour} | tr ',' ' ');do
 		temphour="${temphour}${i}${prettymin} "
 	done
 	prettytime="${temphour}"
-	prettymin=
-	prettyhour=
+	unset prettymin prettyhour
 elif [[ $(echo ${min} | awk '/,/') ]]; then
 	for i in $(echo ${min} | tr ',' ' '); do
 		tempmin="${prettyhour}:${i}"
 		prettytime="${prettytime} ${tempmin}"
 	done
-	prettymin=
-	prettyhour=
+	unset prettymin prettyhour
 fi	
 }
 
